@@ -1,6 +1,6 @@
 import torch
 import os
-# from clip import load
+from clip import load
 
 # Prevent Streamlit from inspecting torch.classes
 if hasattr(torch, 'classes'):

@@ -49,22 +49,8 @@ def load_model():
     
     return model, preprocess, device
 
-# Load model and preprocess function
-model, preprocess, device = load_model()
-
-st.title("MunchMatch")
-
-# Add slider for number of recommendations
-k_recipes = st.slider("Number of recipes to recommend", min_value=1, max_value=10, value=5)
-
-# File uploader
-uploaded_file = st.file_uploader("Choose a food image...", type=["jpg", "jpeg", "png"])
-
-if uploaded_file is not None:
-    # Display the uploaded image
-    image = Image.open(uploaded_file)
-    st.image(image, caption='Uploaded Food Image', use_column_width=True)
-    
+# Function to process image and get recommendations
+def process_image_and_get_recommendations(image, model, preprocess, device, k_recipes):
     # Preprocess and get embedding
     image_input = preprocess(image).unsqueeze(0).to(device)
     
@@ -96,6 +82,27 @@ if uploaded_file is not None:
             }
         }
     ])
+    
+    return similar_recipes
+
+# Load model and preprocess function
+model, preprocess, device = load_model()
+
+st.title("MunchMatch")
+
+# Add slider for number of recommendations
+k_recipes = st.slider("Number of recipes to recommend", min_value=1, max_value=10, value=5)
+
+# File uploader
+uploaded_file = st.file_uploader("Choose a food image...", type=["jpg", "jpeg", "png"])
+
+if uploaded_file is not None:
+    # Display the uploaded image
+    image = Image.open(uploaded_file)
+    st.image(image, caption='Uploaded Food Image', use_column_width=True)
+    
+    # Process image and get recommendations
+    similar_recipes = process_image_and_get_recommendations(image, model, preprocess, device, k_recipes)
 
     # Display similar recipes
     st.write("Most Similar Recipes:")

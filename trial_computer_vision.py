@@ -52,7 +52,7 @@ def load_model():
 # Load model and preprocess function
 model, preprocess, device = load_model()
 
-st.title("Recipe Search by Image using CLIP")
+st.title("MunchMatch")
 
 # Add slider for number of recommendations
 k_recipes = st.slider("Number of recipes to recommend", min_value=1, max_value=10, value=5)

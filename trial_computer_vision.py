@@ -36,7 +36,7 @@ def load_model():
     model_path = os.path.join(cache_dir, 'model_state.pt')
     
     # Load the model
-    model, preprocess = load("ViT-B/16", device=device)
+    model, preprocess = load("ViT-B/32", device=device)
     
     # If cached model exists, load its state
     if os.path.exists(model_path):
@@ -49,8 +49,22 @@ def load_model():
     
     return model, preprocess, device
 
-# Function to process image and get recommendations
-def process_image_and_get_recommendations(image, model, preprocess, device, k_recipes):
+# Load model and preprocess function
+model, preprocess, device = load_model()
+
+st.title("MunchMatch")
+
+# Add slider for number of recommendations
+k_recipes = st.slider("Number of recipes to recommend", min_value=1, max_value=10, value=5)
+
+# File uploader
+uploaded_file = st.file_uploader("Choose a food image...", type=["jpg", "jpeg", "png"])
+
+if uploaded_file is not None:
+    # Display the uploaded image
+    image = Image.open(uploaded_file)
+    st.image(image, caption='Uploaded Food Image', use_column_width=True)
+    
     # Preprocess and get embedding
     image_input = preprocess(image).unsqueeze(0).to(device)
     
@@ -82,27 +96,6 @@ def process_image_and_get_recommendations(image, model, preprocess, device, k_re
             }
         }
     ])
-    
-    return similar_recipes
-
-# Load model and preprocess function
-model, preprocess, device = load_model()
-
-st.title("MunchMatch")
-
-# Add slider for number of recommendations
-k_recipes = st.slider("Number of recipes to recommend", min_value=1, max_value=10, value=5)
-
-# File uploader
-uploaded_file = st.file_uploader("Choose a food image...", type=["jpg", "jpeg", "png"])
-
-if uploaded_file is not None:
-    # Display the uploaded image
-    image = Image.open(uploaded_file)
-    st.image(image, caption='Uploaded Food Image', use_column_width=True)
-    
-    # Process image and get recommendations
-    similar_recipes = process_image_and_get_recommendations(image, model, preprocess, device, k_recipes)
 
     # Display similar recipes
     st.write("Most Similar Recipes:")
